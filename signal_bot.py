@@ -38,7 +38,7 @@ def send_telegram(message):
     try:
         requests.post(url, json=payload, timeout=10)
     except Exception as e:
-        print(f"Telegram hatasi: {e}")
+        print(f"Telegram hatasi: {e}", flush=True)
 
 # ─── VERİ ÇEK ───
 def get_candles(symbol, interval, outputsize=250):
@@ -53,7 +53,7 @@ def get_candles(symbol, interval, outputsize=250):
         r = requests.get(url, params=params, timeout=15)
         data = r.json()
         if "values" not in data:
-            print(f"Veri hatasi {symbol} {interval}: {data}")
+            print(f"Veri hatasi {symbol} {interval}: {data}", flush=True)
             return None
         candles = data["values"]
         candles.reverse()  # eskiden yeniye sırala
@@ -62,7 +62,7 @@ def get_candles(symbol, interval, outputsize=250):
         lows   = [float(c["low"])   for c in candles]
         return {"close": closes, "high": highs, "low": lows}
     except Exception as e:
-        print(f"Cekme hatasi {symbol} {interval}: {e}")
+        print(f"Cekme hatasi {symbol} {interval}: {e}", flush=True)
         return None
 
 # ─── GÖSTERGE HESAPLAMALARI ───
@@ -170,12 +170,12 @@ def check_signal(symbol, interval):
             f"<b>Saat:</b> {datetime.now().strftime('%H:%M:%S')}"
         )
         send_telegram(message)
-        print(f"Sinyal gonderildi: {symbol} {interval} {direction}")
+        print(f"Sinyal gonderildi: {symbol} {interval} {direction}", flush=True)
 
 # ─── ANA DÖNGÜ ───
 def main():
     send_telegram("✅ Numan Sinyal Botu başlatıldı ve çalışıyor!")
-    print("Bot calismaya basladi...")
+    print("Bot calismaya basladi...", flush=True)
 
     while True:
         for symbol in SYMBOLS:
@@ -184,9 +184,9 @@ def main():
                     check_signal(symbol, tf)
                     time.sleep(8)  # API rate limit (8 istek/dakika) için güvenli bekleme
                 except Exception as e:
-                    print(f"Hata {symbol} {tf}: {e}")
+                    print(f"Hata {symbol} {tf}: {e}", flush=True)
 
-        print(f"Tur tamamlandi: {datetime.now().strftime('%H:%M:%S')} - 5 dakika bekleniyor...")
+        print(f"Tur tamamlandi: {datetime.now().strftime('%H:%M:%S')} - 5 dakika bekleniyor...", flush=True)
         time.sleep(300)  # 5 dakikada bir tüm paritelerin taranması
 
 # ─── RENDER İÇİN SAHTE WEB SUNUCUSU (botu uyanık tutmak için) ───
